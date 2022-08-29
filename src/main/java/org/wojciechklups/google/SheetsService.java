@@ -8,12 +8,16 @@
 package org.wojciechklups.google;
 
 import com.google.api.services.sheets.v4.Sheets;
-import com.google.api.services.sheets.v4.model.UpdateValuesResponse;
-import com.google.api.services.sheets.v4.model.ValueRange;
+import com.google.api.services.sheets.v4.model.*;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+import static org.wojciechklups.google.SheetsServicePreparer.SPREADSHEET_ID;
 
 /**
  * @author Author: wklups
@@ -22,27 +26,50 @@ import java.util.Arrays;
 public class SheetsService
 {
     private static Sheets sheetsService;
-    private static final String SPREADSHEET_ID = "1lPzVIsAs_hNmO-2AvKmovfOHSIE_06fyOpK7LTvqWLA";
 
     public static void setup() throws GeneralSecurityException, IOException
     {
         sheetsService = SheetsServicePreparer.getSheetsService();
     }
 
-    public static void writeSomething() throws IOException
-    {
-            ValueRange body = new ValueRange()
-                    .setValues(Arrays.asList(
-                            Arrays.asList("Expenses January"),
-                            Arrays.asList("books", "30"),
-                            Arrays.asList("pens", "10"),
-                            Arrays.asList("Expenses February"),
-                            Arrays.asList("clothes", "20"),
-                            Arrays.asList("shoes", "5")));
+//    public String getFirstFreeColumnCell() throws IOException
+//    {
+//        Spreadsheet spreadsheet = sheetsService.spreadsheets().get(SPREADSHEET_ID).execute();
+//        List<DimensionGroup> columnGroups = spreadsheet.getSheets().get(0).getColumnGroups();
+//    }
 
-            UpdateValuesResponse result = sheetsService.spreadsheets().values()
-                    .update(SPREADSHEET_ID, "A1", body)
-                    .setValueInputOption("RAW")
-                    .execute();
+    public static void writePrices(List<Double> prices) throws IOException
+    {
+        List<ValueRange> data = new ArrayList<>();
+        data.add(new ValueRange()
+                .setRange("B1")
+                .setValues(Arrays.asList(
+                        Arrays.asList(prices.toArray())))
+                .setMajorDimension("COLUMNS"));
+        data.add(new ValueRange()
+                .setRange("B13")
+                .setValues(Arrays.asList(
+                        Arrays.asList("=SUMA(B1:B12)"))));
+
+        BatchUpdateValuesRequest batchBody = new BatchUpdateValuesRequest()
+                .setValueInputOption("USER_ENTERED")
+                .setData(data);
+
+        BatchUpdateValuesResponse batchResult = sheetsService.spreadsheets().values()
+                .batchUpdate(SPREADSHEET_ID, batchBody)
+                .execute();
+
+
+//            ValueRange body = new ValueRange()
+//                    .setValues(Arrays.asList(
+//                            Arrays.asList(prices.toArray())
+//                    ))
+//                    .setMajorDimension("COLUMNS");
+//
+//
+//            UpdateValuesResponse result = sheetsService.spreadsheets().values()
+//                    .update(SPREADSHEET_ID, "B1", body)
+//                    .setValueInputOption("RAW")
+//                    .execute();
     }
 }

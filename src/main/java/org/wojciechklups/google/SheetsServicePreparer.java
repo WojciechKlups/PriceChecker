@@ -9,6 +9,8 @@ package org.wojciechklups.google;
 
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
+import com.google.api.client.json.JsonFactory;
+import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.sheets.v4.Sheets;
 
@@ -21,14 +23,18 @@ import java.security.GeneralSecurityException;
  */
 public class SheetsServicePreparer
 {
+    public static final String CREDENTIALS_FILE_PATH = "/google-sheets-client-secret.json";
+    public static final String SPREADSHEET_ID = "1lPzVIsAs_hNmO-2AvKmovfOHSIE_06fyOpK7LTvqWLA";
+    public static final String TOKENS_DIRECTORY_PATH = "tokens";
     private static final String APPLICATION_NAME = "Price Checker Sheet";
+    private static final JsonFactory JSON_FACTORY = GsonFactory.getDefaultInstance();
 
     public static Sheets getSheetsService() throws IOException, GeneralSecurityException
     {
         Credential credential = GoogleAuthorizeUtil.authorize();
         return new Sheets.Builder(
                 GoogleNetHttpTransport.newTrustedTransport(),
-                JacksonFactory.getDefaultInstance(), credential)
+                JSON_FACTORY, credential)
                 .setApplicationName(APPLICATION_NAME)
                 .build();
     }

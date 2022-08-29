@@ -24,14 +24,14 @@ public class ResponsePreparer
 {
     RequestSenderService requestSenderService = new RequestSenderService(webClient());
 
-    public List<String> getPreparedResponses()
+    public List<Double> getPreparedResponses()
     {
-        List<String> results = new ArrayList<>();
+        List<Double> results = new ArrayList<>();
 
         for (ProductPageEnum productEnum : ProductPageEnum.values())
         {
-            results.add(productEnum.name() + "-" + requestSenderService.getCeneoPage(productEnum)
-                    .split("\"lowPrice\": ")[1].split(",")[0]);
+            results.add(Double.parseDouble(requestSenderService.getCeneoPage(productEnum)
+                    .split("\"lowPrice\": ")[1].split(",")[0]));
         }
 
         return results;
