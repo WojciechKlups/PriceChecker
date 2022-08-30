@@ -7,15 +7,15 @@
  ************************************************************/
 package org.wojciechklups.google;
 
+import com.google.api.client.util.DateTime;
 import com.google.api.services.sheets.v4.Sheets;
 import com.google.api.services.sheets.v4.model.*;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 
 import static org.wojciechklups.google.SheetsServicePreparer.SPREADSHEET_ID;
 
@@ -40,16 +40,30 @@ public class SheetsService
 
     public static void writePrices(List<Double> prices) throws IOException
     {
+
+        ValueRange sheet1 = sheetsService.spreadsheets().values().get(SPREADSHEET_ID, "Arkusz1").execute();
+        int size = sheet1.getValues().size();
+        int nextFreeRow = size + 1;
+
         List<ValueRange> data = new ArrayList<>();
         data.add(new ValueRange()
-                .setRange("B1")
+                .setRange("A" + nextFreeRow)
+                .setValues(Arrays.asList(
+                        Arrays.asList(LocalDate.now()
+                                .format(DateTimeFormatter.ofPattern("dd-MM-yyyy")))
+                ))
+        );
+
+        data.add(new ValueRange()
+                .setRange("B" + nextFreeRow)
                 .setValues(Arrays.asList(
                         Arrays.asList(prices.toArray())))
-                .setMajorDimension("COLUMNS"));
+                );
+
         data.add(new ValueRange()
-                .setRange("B13")
+                .setRange("N" + nextFreeRow)
                 .setValues(Arrays.asList(
-                        Arrays.asList("=SUMA(B1:B12)"))));
+                        Arrays.asList("=SUMA(B" + nextFreeRow + ":M" + nextFreeRow + ")"))));
 
         BatchUpdateValuesRequest batchBody = new BatchUpdateValuesRequest()
                 .setValueInputOption("USER_ENTERED")
@@ -58,7 +72,6 @@ public class SheetsService
         BatchUpdateValuesResponse batchResult = sheetsService.spreadsheets().values()
                 .batchUpdate(SPREADSHEET_ID, batchBody)
                 .execute();
-
 
 //            ValueRange body = new ValueRange()
 //                    .setValues(Arrays.asList(
