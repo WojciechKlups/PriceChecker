@@ -7,7 +7,6 @@
  ************************************************************/
 package org.wojciechklups.google;
 
-import com.google.api.client.util.DateTime;
 import com.google.api.services.sheets.v4.Sheets;
 import com.google.api.services.sheets.v4.model.*;
 
@@ -38,14 +37,29 @@ public class SheetsService
 //        List<DimensionGroup> columnGroups = spreadsheet.getSheets().get(0).getColumnGroups();
 //    }
 
-    public static void writePrices(List<Double> prices) throws IOException
+    public void colourPrices(List<Double> lastPrices)
     {
 
+    }
+
+    public static Double readLastPrice(String column) throws IOException
+    {
+        ValueRange sheet1 = sheetsService.spreadsheets().values().get(SPREADSHEET_ID, "Arkusz1").execute();
+        int size = sheet1.getValues().size();
+
+        ValueRange lastPrice = sheetsService.spreadsheets().values().get(SPREADSHEET_ID, column + size).execute();
+        return Double.parseDouble(lastPrice.getValues().get(0).get(0).toString());
+    }
+
+    public static void writePrices(List<Double> prices) throws IOException
+    {
         ValueRange sheet1 = sheetsService.spreadsheets().values().get(SPREADSHEET_ID, "Arkusz1").execute();
         int size = sheet1.getValues().size();
         int nextFreeRow = size + 1;
 
         List<ValueRange> data = new ArrayList<>();
+
+        //Add date
         data.add(new ValueRange()
                 .setRange("A" + nextFreeRow)
                 .setValues(Arrays.asList(
@@ -54,16 +68,32 @@ public class SheetsService
                 ))
         );
 
+        //Add prices
         data.add(new ValueRange()
                 .setRange("B" + nextFreeRow)
                 .setValues(Arrays.asList(
                         Arrays.asList(prices.toArray())))
                 );
 
+        //Sum prices with GPU
         data.add(new ValueRange()
-                .setRange("N" + nextFreeRow)
+                .setRange("P" + nextFreeRow)
                 .setValues(Arrays.asList(
                         Arrays.asList("=SUMA(B" + nextFreeRow + ":M" + nextFreeRow + ")"))));
+
+        //Sum prices with GPU_1
+        data.add(new ValueRange()
+                .setRange("Q" + nextFreeRow)
+                .setValues(Arrays.asList(
+                        Arrays.asList("=SUMA(B" + nextFreeRow + ":L" + nextFreeRow + "; N" + nextFreeRow + ")")))
+        );
+
+        //Sum prices with GPU_2
+        data.add(new ValueRange()
+                .setRange("R" + nextFreeRow)
+                .setValues(Arrays.asList(
+                        Arrays.asList("=SUMA(B" + nextFreeRow + ":L" + nextFreeRow + "; O" + nextFreeRow + ")")))
+        );
 
         BatchUpdateValuesRequest batchBody = new BatchUpdateValuesRequest()
                 .setValueInputOption("USER_ENTERED")
@@ -72,17 +102,5 @@ public class SheetsService
         BatchUpdateValuesResponse batchResult = sheetsService.spreadsheets().values()
                 .batchUpdate(SPREADSHEET_ID, batchBody)
                 .execute();
-
-//            ValueRange body = new ValueRange()
-//                    .setValues(Arrays.asList(
-//                            Arrays.asList(prices.toArray())
-//                    ))
-//                    .setMajorDimension("COLUMNS");
-//
-//
-//            UpdateValuesResponse result = sheetsService.spreadsheets().values()
-//                    .update(SPREADSHEET_ID, "B1", body)
-//                    .setValueInputOption("RAW")
-//                    .execute();
     }
 }

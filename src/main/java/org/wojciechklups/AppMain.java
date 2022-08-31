@@ -3,6 +3,7 @@ package org.wojciechklups;
 import lombok.AllArgsConstructor;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
+import org.wojciechklups.enums.ProductPageEnum;
 import org.wojciechklups.google.SheetsService;
 import org.wojciechklups.service.ResponsePreparer;
 
@@ -23,6 +24,7 @@ public class AppMain extends SpringBootServletInitializer
 //                .forEach(System.out::println);
 
         SheetsService.setup();
-        SheetsService.writePrices(preparedResponses);
+        System.out.println(SheetsService.readLastPrice(ProductPageEnum.PSU.getColumn()));
+//        SheetsService.writePrices(preparedResponses);
     }
 }
