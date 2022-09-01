@@ -34,8 +34,7 @@ public class GoogleAuthorizeUtil
 {
     private static final JsonFactory JSON_FACTORY = GsonFactory.getDefaultInstance();
 
-    private static final List<String> SCOPES =
-            Collections.singletonList(SheetsScopes.SPREADSHEETS);
+    private static final List<String> SCOPES = Collections.singletonList(SheetsScopes.SPREADSHEETS);
 
     public static Credential authorize() throws IOException, GeneralSecurityException
     {

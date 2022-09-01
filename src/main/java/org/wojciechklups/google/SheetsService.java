@@ -33,6 +33,7 @@ public class SheetsService
 
     @Value("${sheet.first}")
     private Boolean isFirstSheetFlag;
+
     private static String SHEET_NAME;
 
     private static Boolean IS_FIRST_SHEET_FLAG;
@@ -40,6 +41,7 @@ public class SheetsService
     private static String RANGE_SUFFIX;
 
     private static Sheets sheetsService;
+
     @PostConstruct
     public void init()
     {
@@ -47,6 +49,7 @@ public class SheetsService
         IS_FIRST_SHEET_FLAG = this.isFirstSheetFlag;
         RANGE_SUFFIX = IS_FIRST_SHEET_FLAG ? "" : String.format("%s!", SHEET_NAME);
     }
+
     public static void setup() throws GeneralSecurityException, IOException
     {
         sheetsService = SheetsServicePreparer.getSheetsService();
