@@ -10,13 +10,14 @@ package org.wojciechklups.service;
 import org.wojciechklups.enums.ProductPageEnum;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static org.wojciechklups.WebClientPreparer.webClient;
 
 /**
+ * To change active spring profile please go into Project settings -> VM environment -> and paste -Dspring.profiles.active={profil_name}
+ * Profiles: test, dev
+ *
  * @author Author: wklups
  * @timestamp Date: 2022-08-27 21:12:38 +0200 (27 sie 2022)
  */
@@ -36,5 +37,4 @@ public class ResponsePreparer
 
         return results;
     }
-
 }
