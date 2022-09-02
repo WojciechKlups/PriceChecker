@@ -12,6 +12,13 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.List;
 
+/**
+ * To change active spring profile please go into Project settings -> VM environment -> and paste -Dspring.profiles.active={profil_name}
+ * Profiles: test, dev
+ *
+ * @author Author: psobieraj
+ * @timestamp Date: 2022-09-01 23:41:15 +0200 (01 wrz 2022)
+ */
 @SpringBootApplication
 @AllArgsConstructor
 public class AppMain extends SpringBootServletInitializer
