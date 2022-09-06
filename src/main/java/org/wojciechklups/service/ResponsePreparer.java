@@ -10,13 +10,13 @@ package org.wojciechklups.service;
 import org.wojciechklups.enums.ProductPageEnum;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static org.wojciechklups.WebClientPreparer.webClient;
 
 /**
+ * This class handles preparing prices from ceneo page response.
+ *
  * @author Author: wklups
  * @timestamp Date: 2022-08-27 21:12:38 +0200 (27 sie 2022)
  */

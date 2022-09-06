@@ -14,6 +14,8 @@ import org.springframework.web.reactive.function.client.WebClient;
 import org.wojciechklups.enums.ProductPageEnum;
 
 /**
+ * This class handles getting response from ceneo pages.
+ *
  * @author Author: wklups
  * @timestamp Date: 2022-08-27 13:49:28 +0200 (27 sie 2022)
  */

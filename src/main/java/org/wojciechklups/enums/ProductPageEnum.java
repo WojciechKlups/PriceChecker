@@ -11,6 +11,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
+ *  This enum contains links to ceneo pages of given PC components.
+ *
  * @author Author: wklups
  * @timestamp Date: 2022-08-27 13:34:49 +0200 (27 sie 2022)
  */

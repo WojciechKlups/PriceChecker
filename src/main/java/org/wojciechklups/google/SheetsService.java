@@ -19,6 +19,8 @@ import java.util.*;
 import static org.wojciechklups.google.SheetsServicePreparer.SPREADSHEET_ID;
 
 /**
+ * This service handles all necessary methods that are used to read/write in google sheets.
+ *
  * @author Author: wklups
  * @timestamp Date: 2022-08-29 15:14:21 +0200 (29 sie 2022)
  */

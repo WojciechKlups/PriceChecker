@@ -27,6 +27,8 @@ import static org.wojciechklups.google.SheetsServicePreparer.CREDENTIALS_FILE_PA
 import static org.wojciechklups.google.SheetsServicePreparer.TOKENS_DIRECTORY_PATH;
 
 /**
+ * This class handles authorization with google services.
+ *
  * @author Author: wklups
  * @timestamp Date: 2022-08-29 13:57:29 +0200 (29 sie 2022)
  */

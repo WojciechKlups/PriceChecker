@@ -13,6 +13,8 @@ import org.springframework.web.reactive.function.client.ExchangeStrategies;
 import org.springframework.web.reactive.function.client.WebClient;
 
 /**
+ * This class prepares webClient object with bigger memory allocation.
+ *
  * @author Author: wklups
  * @timestamp Date: 2022-08-27 21:13:18 +0200 (27 sie 2022)
  */

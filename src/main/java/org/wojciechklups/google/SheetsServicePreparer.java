@@ -18,6 +18,8 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 
 /**
+ * This class contains various constants and one method for creating google sheets service object.
+ *
  * @author Author: wklups
  * @timestamp Date: 2022-08-29 15:03:05 +0200 (29 sie 2022)
  */
