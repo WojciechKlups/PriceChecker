@@ -14,7 +14,7 @@ import java.util.List;
 
 import static org.wojciechklups.WebClientPreparer.webClient;
 
-/**a
+/**
  * @author Author: wklups
  * @timestamp Date: 2022-08-27 21:12:38 +0200 (27 sie 2022)
  */
