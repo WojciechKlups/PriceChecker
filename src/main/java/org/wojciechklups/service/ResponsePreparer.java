@@ -14,10 +14,7 @@ import java.util.List;
 
 import static org.wojciechklups.WebClientPreparer.webClient;
 
-/**
- * To change active spring profile please go into Project settings -> VM environment -> and paste -Dspring.profiles.active={profil_name}
- * Profiles: test, dev
- *
+/**a
  * @author Author: wklups
  * @timestamp Date: 2022-08-27 21:12:38 +0200 (27 sie 2022)
  */
