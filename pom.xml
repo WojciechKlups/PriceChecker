@@ -69,6 +69,13 @@
             <artifactId>google-http-client-jackson2</artifactId>
             <version>1.42.2</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/com.google.apis/google-api-services-drive -->
+        <dependency>
+            <groupId>com.google.apis</groupId>
+            <artifactId>google-api-services-drive</artifactId>
+            <version>v3-rev20220815-2.0.0</version>
+        </dependency>
+
         <!-- Thanks for using https://jar-download.com -->
 
     </dependencies>

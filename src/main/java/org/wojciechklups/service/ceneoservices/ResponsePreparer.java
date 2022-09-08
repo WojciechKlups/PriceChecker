@@ -5,9 +5,10 @@
  * All rights reserved
  *
  ************************************************************/
-package org.wojciechklups.service;
+package org.wojciechklups.service.ceneoservices;
 
 import org.wojciechklups.enums.ProductPageEnum;
+import org.wojciechklups.service.ceneoservices.RequestSenderService;
 
 import java.util.ArrayList;
 import java.util.List;

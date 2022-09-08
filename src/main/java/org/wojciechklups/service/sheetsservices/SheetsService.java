@@ -5,10 +5,11 @@
  * All rights reserved
  *
  ************************************************************/
-package org.wojciechklups.google;
+package org.wojciechklups.service.sheetsservices;
 
 import com.google.api.services.sheets.v4.Sheets;
 import com.google.api.services.sheets.v4.model.*;
+import org.wojciechklups.google.SheetsServicePreparer;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
