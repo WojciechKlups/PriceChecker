@@ -13,7 +13,7 @@ import java.security.GeneralSecurityException;
 import java.util.List;
 
 /**
- * To change active spring profile please go into Project settings -> VM environment -> and paste -Dspring.profiles.active={profil_name}
+ * To change active spring profile please go into Project settings -> VM environment -> and paste -Dspring.profiles.active={profile_name}
  * Profiles: test, dev
  *
  * @author Author: psobieraj
