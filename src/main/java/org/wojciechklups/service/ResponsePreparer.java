@@ -26,14 +26,9 @@ public class ResponsePreparer
 
     public List<Double> getPreparedResponses()
     {
-        List<Double> results = new ArrayList<>();
-
-        for (ProductPageEnum productEnum : ProductPageEnum.values())
-        {
-            results.add(Double.parseDouble(requestSenderService.getCeneoPage(productEnum)
-                    .split("\"lowPrice\": ")[1].split(",")[0]));
-        }
-
-        return results;
+        return Arrays.stream(ProductPageEnum.values()).parallel()
+                .map(productPage -> Double.parseDouble(requestSenderService.getCeneoPage(productPage)
+                        .split("\"lowPrice\": ")[1].split(",")[0]))
+                .collect(Collectors.toList());
     }
 }
