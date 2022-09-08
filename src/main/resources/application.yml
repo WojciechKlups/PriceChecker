@@ -4,11 +4,11 @@ spring:
 
 sheet:
   name: "Arkusz1"
-  first: true
+  isFirst: true
 ---
 spring:
   profiles: test
 
 sheet:
   name: "Arkusz2"
-  first: false
+  isFirst: false

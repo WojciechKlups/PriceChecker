@@ -31,12 +31,10 @@ public class SheetsService
     @Value("${sheet.name}")
     private String sheetName;
 
-    @Value("${sheet.first}")
+    @Value("${sheet.isFirst}")
     private Boolean isFirstSheetFlag;
 
     private static String SHEET_NAME;
-
-    private static Boolean IS_FIRST_SHEET_FLAG;
 
     private static String RANGE_SUFFIX;
 
@@ -46,7 +44,7 @@ public class SheetsService
     public void init()
     {
         SHEET_NAME = this.sheetName;
-        IS_FIRST_SHEET_FLAG = this.isFirstSheetFlag;
+        Boolean IS_FIRST_SHEET_FLAG = this.isFirstSheetFlag;
         RANGE_SUFFIX = IS_FIRST_SHEET_FLAG ? "" : String.format("%s!", SHEET_NAME);
     }
 
