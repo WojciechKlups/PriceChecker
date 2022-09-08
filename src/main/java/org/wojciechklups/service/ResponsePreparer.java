@@ -36,5 +36,4 @@ public class ResponsePreparer
 
         return results;
     }
-
 }

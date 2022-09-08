@@ -24,7 +24,7 @@ import org.wojciechklups.enums.ProductPageEnum;
 public class RequestSenderService
 {
     @Autowired
-    WebClient webClient;
+    private WebClient webClient;
 
     public String getCeneoPage(ProductPageEnum productPage)
     {
