@@ -9,8 +9,9 @@ package org.wojciechklups.service;
 
 import org.wojciechklups.enums.ProductPageEnum;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.wojciechklups.WebClientPreparer.webClient;
 
