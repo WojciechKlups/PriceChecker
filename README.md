@@ -10,5 +10,5 @@ To build an application to an executable <code>.jar</code> file you should choos
 ## Running .jar:
 
 To run the application packaged into a .jar file please run the below command in CMD:
-- <code>java -jar <your-application-name>.jar</code>
+- <code>java -jar '<your-application-name>'.jar</code>
 
