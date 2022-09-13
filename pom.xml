@@ -80,7 +80,7 @@
     </dependencies>
 
 <!--    mvn clean install -P dev (to build app for dev profile) -->
-<!--    mvn clean install -P dev (to build app for test profile) -->
+<!--    mvn clean install -P test (to build app for test profile) -->
     <profiles>
         <profile>
             <id>test</id>
