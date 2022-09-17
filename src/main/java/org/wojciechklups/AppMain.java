@@ -33,7 +33,8 @@ public class AppMain extends SpringBootServletInitializer
 //                .forEach(System.out::println);
 
         SheetsService.setup();
-        System.out.println(SheetsService.readLastPrice(ProductPageEnum.PSU.getColumn()));
+//        System.out.println(SheetsService.readLastPrice(ProductPageEnum.PSU.getColumn()));
 //        SheetsService.writePrices(preparedResponses);
+        SheetsService.addTestChart();
     }
 }

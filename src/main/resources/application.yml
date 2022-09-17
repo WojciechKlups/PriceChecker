@@ -10,6 +10,7 @@ spring:
 sheet:
   name: "Arkusz1"
   isFirst: true
+  gid: 0
 ---
 spring:
   config:
@@ -19,3 +20,4 @@ spring:
 sheet:
   name: "Arkusz2"
   isFirst: false
+  gid: 42467618
