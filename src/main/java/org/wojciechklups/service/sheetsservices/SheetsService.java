@@ -7,8 +7,12 @@
  ************************************************************/
 package org.wojciechklups.service.sheetsservices;
 
+import com.google.api.services.drive.Drive;
+import com.google.api.services.drive.model.FileList;
 import com.google.api.services.sheets.v4.Sheets;
 import com.google.api.services.sheets.v4.model.*;
+import lombok.extern.slf4j.Slf4j;
+import org.wojciechklups.google.DriveServicePreparer;
 import org.wojciechklups.google.SheetsServicePreparer;
 
 import java.io.IOException;
@@ -25,13 +29,31 @@ import static org.wojciechklups.google.SheetsServicePreparer.SPREADSHEET_ID;
  * @author Author: wklups
  * @timestamp Date: 2022-08-29 15:14:21 +0200 (29 sie 2022)
  */
+@Slf4j
 public class SheetsService
 {
     private static Sheets sheetsService;
+    private static Drive driveService;
 
     public static void setup() throws GeneralSecurityException, IOException
     {
+        driveService = DriveServicePreparer.getDriveService();
         sheetsService = SheetsServicePreparer.getSheetsService();
+
+        FileList searchResult = driveService.files().list()
+                .setQ("name=Price Checker Sheet")
+                .setSpaces("drive")
+                .execute();
+
+        if (searchResult.isEmpty())
+        {
+            log.info("App didn't found file named 'Price Checker Sheet'. The app will create one and will perform the rest of operations on it.");
+            //stwórz takiego sheeta
+        }
+        else
+        {
+            log.info("Found file named 'Price Checker Sheet'. App now will operate on that file.");
+        }
     }
 
 //    public String getFirstFreeColumnCell() throws IOException

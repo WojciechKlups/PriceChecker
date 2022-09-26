@@ -7,9 +7,9 @@
  ************************************************************/
 package org.wojciechklups.google;
 
+import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.services.drive.Drive;
-import com.google.api.services.sheets.v4.Sheets;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -22,13 +22,15 @@ import static org.wojciechklups.google.SheetsServicePreparer.JSON_FACTORY;
  */
 public class DriveServicePreparer
 {
-//    public static Sheets getSheetsService() throws IOException, GeneralSecurityException
-//    {
-////         return new Drive.Builder(GoogleNetHttpTransport.newTrustedTransport(),
-////                JSON_FACTORY,
-////                requestInitializer)
-////                .setApplicationName("Drive samples")
-////                .build();
-//
-//    }
+    public static Drive getDriveService() throws IOException, GeneralSecurityException
+    {
+        Credential credential = GoogleAuthorizeUtil.authorize();
+
+         return new Drive.Builder(
+                 GoogleNetHttpTransport.newTrustedTransport(),
+                JSON_FACTORY, credential)
+                .setApplicationName("Drive searcher")
+                .build();
+
+    }
 }
