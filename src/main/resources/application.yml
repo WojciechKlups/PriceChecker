@@ -1,0 +1,21 @@
+spring:
+  profiles:
+    active: '@activatedProperties@'
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
+
+sheet:
+  name: "Arkusz1"
+  isFirst: true
+---
+spring:
+  config:
+    activate:
+      on-profile: test
+
+sheet:
+  name: "Arkusz2"
+  isFirst: false

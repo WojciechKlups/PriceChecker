@@ -12,6 +12,7 @@ import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.services.sheets.v4.Sheets;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -22,6 +23,7 @@ import java.security.GeneralSecurityException;
  * @author Author: wklups
  * @timestamp Date: 2022-08-29 15:03:05 +0200 (29 sie 2022)
  */
+@Component
 public class SheetsServicePreparer
 {
     public static final String CREDENTIALS_FILE_PATH = "/google-sheets-client-secret.json";

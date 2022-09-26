@@ -22,7 +22,8 @@ import org.springframework.web.reactive.function.client.WebClient;
 public class WebClientPreparer
 {
     @Bean
-    public static WebClient webClient() {
+    public static WebClient webClient()
+    {
         final int size = 16 * 1024 * 1024;
         final ExchangeStrategies strategies = ExchangeStrategies.builder()
                 .codecs(codecs -> codecs.defaultCodecs().maxInMemorySize(size))
