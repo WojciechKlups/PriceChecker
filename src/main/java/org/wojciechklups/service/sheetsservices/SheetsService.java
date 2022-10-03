@@ -11,9 +11,9 @@ import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.FileList;
 import com.google.api.services.sheets.v4.Sheets;
 import com.google.api.services.sheets.v4.model.*;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import lombok.extern.slf4j.Slf4j;
 import org.wojciechklups.google.DriveServicePreparer;
 import org.wojciechklups.google.SheetsServicePreparer;
 
@@ -22,9 +22,9 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
-
-import static org.wojciechklups.google.SheetsServicePreparer.SPREADSHEET_ID;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * This service handles all necessary methods that are used to read/write in google sheets.
@@ -45,6 +45,7 @@ public class SheetsService
     private static String SHEET_NAME;
 
     private static String RANGE_SUFFIX;
+    public static String spreadsheetId = "1lPzVIsAs_hNmO-2AvKmovfOHSIE_06fyOpK7LTvqWLA";
 
     private static Sheets sheetsService;
     private static Drive driveService;
@@ -63,18 +64,28 @@ public class SheetsService
         sheetsService = SheetsServicePreparer.getSheetsService();
 
         FileList searchResult = driveService.files().list()
-                .setQ("name=Price Checker Sheet")
+                .setQ("name='Price Checker Sheet'")
                 .setSpaces("drive")
                 .execute();
 
-        if (searchResult.isEmpty())
+        if (searchResult.getFiles().isEmpty())
         {
             log.info("App didn't found file named 'Price Checker Sheet'. The app will create one and will perform the rest of operations on it.");
-            //stwórz takiego sheeta
+
+            Spreadsheet spreadsheet = new Spreadsheet()
+                    .setProperties(new SpreadsheetProperties().setTitle("Price Checker Sheet"));
+
+            spreadsheet = sheetsService.spreadsheets().create(spreadsheet)
+                    .setFields("spreadsheetId")
+                    .execute();
+
+            spreadsheetId = spreadsheet.getSpreadsheetId();
         }
         else
         {
             log.info("Found file named 'Price Checker Sheet'. App now will operate on that file.");
+
+            spreadsheetId = searchResult.getFiles().get(0).getId();
         }
     }
 
@@ -91,16 +102,16 @@ public class SheetsService
 
     public static Double readLastPrice(String column) throws IOException
     {
-        ValueRange sheet1 = sheetsService.spreadsheets().values().get(SPREADSHEET_ID, SHEET_NAME).execute();
+        ValueRange sheet1 = sheetsService.spreadsheets().values().get(spreadsheetId, SHEET_NAME).execute();
         int size = sheet1.getValues().size();
-        ValueRange lastPrice = sheetsService.spreadsheets().values().get(SPREADSHEET_ID, column + size).execute();
+        ValueRange lastPrice = sheetsService.spreadsheets().values().get(spreadsheetId, column + size).execute();
 
         return Double.parseDouble(lastPrice.getValues().get(0).get(0).toString());
     }
 
     public static void writePrices(List<Double> prices) throws IOException
     {
-        ValueRange sheet1 = sheetsService.spreadsheets().values().get(SPREADSHEET_ID, SHEET_NAME).execute();
+        ValueRange sheet1 = sheetsService.spreadsheets().values().get(spreadsheetId, SHEET_NAME).execute();
         int size = sheet1.getValues().size();
         int nextFreeRow = size + 1;
 
@@ -147,7 +158,7 @@ public class SheetsService
                 .setData(data);
 
         BatchUpdateValuesResponse batchResult = sheetsService.spreadsheets().values()
-                .batchUpdate(SPREADSHEET_ID, batchBody)
+                .batchUpdate(spreadsheetId, batchBody)
                 .execute();
     }
 }
