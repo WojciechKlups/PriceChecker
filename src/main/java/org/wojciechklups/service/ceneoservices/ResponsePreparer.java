@@ -28,7 +28,9 @@ public class ResponsePreparer
 
     public List<Double> getPreparedResponses()
     {
-        return Arrays.stream(ProductPageEnum.values()).parallel()
+        return Arrays.stream(ProductPageEnum.values())
+                .filter(v -> !Arrays.asList(ProductPageEnum.DATE, ProductPageEnum.TOTAL, ProductPageEnum.TOTAL_1, ProductPageEnum.TOTAL_2).contains(v))
+                        .parallel()
                 .map(productPage -> Double.parseDouble(requestSenderService.getCeneoPage(productPage)
                         .split("\"lowPrice\": ")[1].split(",")[0]))
                 .collect(Collectors.toList());

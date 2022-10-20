@@ -26,6 +26,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * This service handles all necessary methods that are used to read/write in google sheets.
@@ -99,11 +100,12 @@ public class SheetsService
         ValueRange sheet1 = sheetsService.spreadsheets().values().get(spreadsheetId, SHEET_NAME).execute();
         List<ValueRange> data = new ArrayList<>();
 
-        data.add(new ValueRange()
-                .setRange(String.format("%sA%s", RANGE_SUFFIX, ProductPageEnum.values().length))
-                .setValues(Arrays.asList(
-                        Arrays.asList(
-                                Arrays.stream(ProductPageEnum.values()).toString()
+        data.add(new ValueRange() // To fix
+                .setRange(String.format("%s%s1:%s%s", RANGE_SUFFIX,
+                        ProductPageEnum.DATE.getColumn(),
+                        ProductPageEnum.TOTAL_2.getColumn(),
+                        ProductPageEnum.values().length))
+                .setValues(Arrays.asList(Arrays.stream(ProductPageEnum.values()).map(v -> v.toString()).collect(Collectors.toList()
                 )))
         );
 
