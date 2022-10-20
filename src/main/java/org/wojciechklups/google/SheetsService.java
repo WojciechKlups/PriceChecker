@@ -70,7 +70,7 @@ public class SheetsService
     {
         ValueRange sheet1 = sheetsService.spreadsheets().values().get(SPREADSHEET_ID, SHEET_NAME).execute();
         int size = sheet1.getValues().size();
-        ValueRange lastPrice = sheetsService.spreadsheets().values().get(SPREADSHEET_ID, column + size).execute();
+        ValueRange lastPrice = sheetsService.spreadsheets().values().get(SPREADSHEET_ID, String.format("%s%s%s", RANGE_SUFFIX, column, size)).execute();
 
         return Double.parseDouble(lastPrice.getValues().get(0).get(0).toString());
     }
