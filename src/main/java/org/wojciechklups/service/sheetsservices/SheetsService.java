@@ -107,6 +107,8 @@ public class SheetsService
 
     public static void writePrices(List<Double> prices) throws IOException
     {
+        log.info("Writing prices START");
+
         ValueRange sheet1 = sheetsService.spreadsheets().values().get(spreadsheetId, SHEET_NAME).execute();
         int size = sheet1.getValues().size();
         int nextFreeRow = size + 1;
@@ -156,5 +158,7 @@ public class SheetsService
         BatchUpdateValuesResponse batchResult = sheetsService.spreadsheets().values()
                 .batchUpdate(spreadsheetId, batchBody)
                 .execute();
+
+        log.info("Writing prices END");
     }
 }
