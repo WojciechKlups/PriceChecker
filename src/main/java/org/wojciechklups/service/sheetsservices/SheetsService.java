@@ -63,8 +63,10 @@ public class SheetsService
         driveService = DriveServicePreparer.getDriveService();
         sheetsService = SheetsServicePreparer.getSheetsService();
 
+        String userEmail = driveService.about().get().setFields("user").execute().getUser().getEmailAddress();
+
         FileList searchResult = driveService.files().list()
-                .setQ("name='Price Checker Sheet'")
+                .setQ("name='Price Checker Sheet' and '" + userEmail + "' in owners")
                 .setSpaces("drive")
                 .execute();
 
@@ -88,12 +90,6 @@ public class SheetsService
             spreadsheetId = searchResult.getFiles().get(0).getId();
         }
     }
-
-//    public String getFirstFreeColumnCell() throws IOException
-//    {
-//        Spreadsheet spreadsheet = sheetsService.spreadsheets().get(SPREADSHEET_ID).execute();
-//        List<DimensionGroup> columnGroups = spreadsheet.getSheets().get(0).getColumnGroups();
-//    }
 
     public void colourPrices(List<Double> lastPrices)
     {
