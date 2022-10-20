@@ -20,6 +20,7 @@ import lombok.Getter;
 @Getter
 public enum ProductPageEnum
 {
+    DATE("", "A"),
     PSU("https://www.ceneo.pl/51731843", "B"),
     CHASSIS_FAN("https://www.ceneo.pl/42364006", "C"),
     THERMAL_PASTE("https://www.ceneo.pl/39314848", "D"),

@@ -14,6 +14,7 @@ import com.google.api.services.sheets.v4.model.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.wojciechklups.enums.ProductPageEnum;
 import org.wojciechklups.google.DriveServicePreparer;
 import org.wojciechklups.google.SheetsServicePreparer;
 
@@ -45,7 +46,7 @@ public class SheetsService
     private static String SHEET_NAME;
 
     private static String RANGE_SUFFIX;
-    public static String spreadsheetId = "1lPzVIsAs_hNmO-2AvKmovfOHSIE_06fyOpK7LTvqWLA";
+    public static String spreadsheetId = "";
 
     private static Sheets sheetsService;
     private static Drive driveService;
@@ -82,6 +83,8 @@ public class SheetsService
                     .execute();
 
             spreadsheetId = spreadsheet.getSpreadsheetId();
+
+            createHeadersInSpreadsheet();
         }
         else
         {
@@ -89,6 +92,28 @@ public class SheetsService
 
             spreadsheetId = searchResult.getFiles().get(0).getId();
         }
+    }
+
+    private static void createHeadersInSpreadsheet() throws IOException
+    {
+        ValueRange sheet1 = sheetsService.spreadsheets().values().get(spreadsheetId, SHEET_NAME).execute();
+        List<ValueRange> data = new ArrayList<>();
+
+        data.add(new ValueRange()
+                .setRange(String.format("%sA%s", RANGE_SUFFIX, ProductPageEnum.values().length))
+                .setValues(Arrays.asList(
+                        Arrays.asList(
+                                Arrays.stream(ProductPageEnum.values()).toString()
+                )))
+        );
+
+        BatchUpdateValuesRequest batchBody = new BatchUpdateValuesRequest()
+                .setValueInputOption("USER_ENTERED")
+                .setData(data);
+
+        BatchUpdateValuesResponse batchResult = sheetsService.spreadsheets().values()
+                .batchUpdate(spreadsheetId, batchBody)
+                .execute();
     }
 
     public void colourPrices(List<Double> lastPrices)
