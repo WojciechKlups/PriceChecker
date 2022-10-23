@@ -61,12 +61,6 @@ public class SheetsService
         sheetsService = SheetsServicePreparer.getSheetsService();
     }
 
-//    public String getFirstFreeColumnCell() throws IOException
-//    {
-//        Spreadsheet spreadsheet = sheetsService.spreadsheets().get(SPREADSHEET_ID).execute();
-//        List<DimensionGroup> columnGroups = spreadsheet.getSheets().get(0).getColumnGroups();
-//    }
-
     public void colourPrices(List<Double> lastPrices)
     {
 
@@ -132,100 +126,5 @@ public class SheetsService
         BatchUpdateValuesResponse batchResult = sheetsService.spreadsheets().values()
                 .batchUpdate(SPREADSHEET_ID, batchBody)
                 .execute();
-    }
-
-    public static void addTestChart() throws IOException
-    {
-        List<Request> requests = new ArrayList<>();
-
-        Integer chartStartRow = sheetsService // Chart start row = all rows + 1
-                .spreadsheets()
-                .values()
-                .get(SPREADSHEET_ID, SHEET_NAME)
-                .execute()
-                .getValues()
-                .size() + 1;
-
-        requests.add(new Request().setAddChart(new AddChartRequest().setChart(new EmbeddedChart()
-                .setSpec(new ChartSpec()
-                        .setTitle("Computer parts prices")
-                        .setBasicChart(new BasicChartSpec()
-                                .setChartType("COLUMN")
-                                .setLegendPosition("BOTTOM_LEGEND")
-                                .setAxis(new ArrayList<>(){{
-                                    add(new BasicChartAxis()
-                                            .setPosition("BOTTOM_AXIS")
-                                            .setTitle("Date"));
-                                    add(new BasicChartAxis()
-                                            .setPosition("LEFT_AXIS")
-                                            .setTitle("Price"));
-                                }})
-                                .setDomains(new ArrayList<>(){{
-                                    add(new BasicChartDomain()
-                                            .setDomain(new ChartData()
-                                                    .setSourceRange(new ChartSourceRange()
-                                                            .setSources(Arrays.asList(
-                                                                    new GridRange()
-                                                                            .setSheetId(SHEET_GID)
-                                                                            .setStartRowIndex(1)
-                                                                            .setEndRowIndex(7)
-                                                                            .setStartColumnIndex(0)
-                                                                            .setEndColumnIndex(1)
-                                                            )))));
-                                }})
-                                .setSeries(Arrays.asList(
-                                        new BasicChartSeries()
-                                                .setSeries(new ChartData()
-                                                        .setSourceRange(new ChartSourceRange()
-                                                                .setSources(Arrays.asList(
-                                                                        new GridRange()
-                                                                                .setSheetId(SHEET_GID)
-                                                                                .setStartRowIndex(1)
-                                                                                .setEndRowIndex(7)
-                                                                                .setStartColumnIndex(1)
-                                                                                .setEndColumnIndex(2)
-                                                                ))))
-                                                .setTargetAxis("LEFT_AXIS"),
-                                        new BasicChartSeries()
-                                                .setSeries(new ChartData()
-                                                        .setSourceRange(new ChartSourceRange()
-                                                                .setSources(Arrays.asList(
-                                                                        new GridRange()
-                                                                                .setSheetId(SHEET_GID)
-                                                                                .setStartRowIndex(1)
-                                                                                .setEndRowIndex(7)
-                                                                                .setStartColumnIndex(2)
-                                                                                .setEndColumnIndex(3)
-                                                                ))))
-                                                .setTargetAxis("LEFT_AXIS"),
-                                        new BasicChartSeries()
-                                                .setSeries(new ChartData()
-                                                        .setSourceRange(new ChartSourceRange()
-                                                                .setSources(Arrays.asList(
-                                                                        new GridRange()
-                                                                                .setSheetId(SHEET_GID)
-                                                                                .setStartRowIndex(1)
-                                                                                .setEndRowIndex(7)
-                                                                                .setStartColumnIndex(3)
-                                                                                .setEndColumnIndex(4)
-                                                                ))))
-                                                .setTargetAxis("LEFT_AXIS")
-                                ))))
-                .setPosition(new EmbeddedObjectPosition()
-                        .setOverlayPosition(new OverlayPosition()
-                                .setAnchorCell(new GridCoordinate()
-                                        .setSheetId(SHEET_GID)
-                                        .setRowIndex(chartStartRow)
-                                        .setColumnIndex(0))))))
-        );
-
-        BatchUpdateSpreadsheetRequest requestBody = new BatchUpdateSpreadsheetRequest()
-                .setRequests(requests);
-
-        Sheets.Spreadsheets.BatchUpdate request =
-                sheetsService.spreadsheets().batchUpdate(SPREADSHEET_ID, requestBody);
-
-        BatchUpdateSpreadsheetResponse response = request.execute();
-        System.out.println(response);
     }
 }
