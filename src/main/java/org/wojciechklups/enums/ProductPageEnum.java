@@ -20,6 +20,7 @@ import lombok.Getter;
 @Getter
 public enum ProductPageEnum
 {
+    DATE("", "A"),
     PSU("https://www.ceneo.pl/51731843", "B"),
     CHASSIS_FAN("https://www.ceneo.pl/42364006", "C"),
     THERMAL_PASTE("https://www.ceneo.pl/39314848", "D"),
@@ -33,7 +34,10 @@ public enum ProductPageEnum
     CPU_COOLER("https://www.ceneo.pl/120786545", "L"),
     GPU("https://www.ceneo.pl/114861667", "M"),
     GPU_1("https://www.ceneo.pl/112032819", "N"), //5-8%
-    GPU_2("https://www.ceneo.pl/96957937", "O"); //25-30%
+    GPU_2("https://www.ceneo.pl/96957937", "O"), //25-30%
+    TOTAL("", "P"),
+    TOTAL_1("", "Q"),
+    TOTAL_2("", "R");
 
     private final String url;
     private final String column;

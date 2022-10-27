@@ -5,21 +5,28 @@
  * All rights reserved
  *
  ************************************************************/
-package org.wojciechklups.google;
+package org.wojciechklups.service.sheetsservices;
 
+import com.google.api.services.drive.Drive;
+import com.google.api.services.drive.model.FileList;
 import com.google.api.services.sheets.v4.Sheets;
 import com.google.api.services.sheets.v4.model.*;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.wojciechklups.enums.ProductPageEnum;
+import org.wojciechklups.google.DriveServicePreparer;
+import org.wojciechklups.google.SheetsServicePreparer;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
-
-import static org.wojciechklups.google.SheetsServicePreparer.SPREADSHEET_ID;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * This service handles all necessary methods that are used to read/write in google sheets.
@@ -28,6 +35,7 @@ import static org.wojciechklups.google.SheetsServicePreparer.SPREADSHEET_ID;
  * @timestamp Date: 2022-08-29 15:14:21 +0200 (29 sie 2022)
  */
 @Service
+@Slf4j
 public class SheetsService
 {
     @Value("${sheet.name}")
@@ -39,8 +47,10 @@ public class SheetsService
     private static String SHEET_NAME;
 
     private static String RANGE_SUFFIX;
+    public static String spreadsheetId = "";
 
     private static Sheets sheetsService;
+    private static Drive driveService;
 
     @PostConstruct
     public void init()
@@ -52,14 +62,61 @@ public class SheetsService
 
     public static void setup() throws GeneralSecurityException, IOException
     {
+        driveService = DriveServicePreparer.getDriveService();
         sheetsService = SheetsServicePreparer.getSheetsService();
+
+        String userEmail = driveService.about().get().setFields("user").execute().getUser().getEmailAddress();
+
+        FileList searchResult = driveService.files().list()
+                .setQ("name='Price Checker Sheet' and '" + userEmail + "' in owners")
+                .setSpaces("drive")
+                .execute();
+
+        if (searchResult.getFiles().isEmpty())
+        {
+            log.info("App didn't found file named 'Price Checker Sheet'. The app will create one and will perform the rest of operations on it.");
+
+            Spreadsheet spreadsheet = new Spreadsheet()
+                    .setProperties(new SpreadsheetProperties().setTitle("Price Checker Sheet"));
+
+            spreadsheet = sheetsService.spreadsheets().create(spreadsheet)
+                    .setFields("spreadsheetId")
+                    .execute();
+
+            spreadsheetId = spreadsheet.getSpreadsheetId();
+
+            createHeadersInSpreadsheet();
+        }
+        else
+        {
+            log.info("Found file named 'Price Checker Sheet'. App now will operate on that file.");
+
+            spreadsheetId = searchResult.getFiles().get(0).getId();
+        }
     }
 
-//    public String getFirstFreeColumnCell() throws IOException
-//    {
-//        Spreadsheet spreadsheet = sheetsService.spreadsheets().get(SPREADSHEET_ID).execute();
-//        List<DimensionGroup> columnGroups = spreadsheet.getSheets().get(0).getColumnGroups();
-//    }
+    private static void createHeadersInSpreadsheet() throws IOException
+    {
+        ValueRange sheet1 = sheetsService.spreadsheets().values().get(spreadsheetId, SHEET_NAME).execute();
+        List<ValueRange> data = new ArrayList<>();
+
+        data.add(new ValueRange() // To fix
+                .setRange(String.format("%s%s1:%s%s", RANGE_SUFFIX,
+                        ProductPageEnum.DATE.getColumn(),
+                        ProductPageEnum.TOTAL_2.getColumn(),
+                        ProductPageEnum.values().length))
+                .setValues(Arrays.asList(Arrays.stream(ProductPageEnum.values()).map(v -> v.toString()).collect(Collectors.toList()
+                )))
+        );
+
+        BatchUpdateValuesRequest batchBody = new BatchUpdateValuesRequest()
+                .setValueInputOption("USER_ENTERED")
+                .setData(data);
+
+        BatchUpdateValuesResponse batchResult = sheetsService.spreadsheets().values()
+                .batchUpdate(spreadsheetId, batchBody)
+                .execute();
+    }
 
     public void colourPrices(List<Double> lastPrices)
     {
@@ -68,16 +125,18 @@ public class SheetsService
 
     public static Double readLastPrice(String column) throws IOException
     {
-        ValueRange sheet1 = sheetsService.spreadsheets().values().get(SPREADSHEET_ID, SHEET_NAME).execute();
+        ValueRange sheet1 = sheetsService.spreadsheets().values().get(spreadsheetId, SHEET_NAME).execute();
         int size = sheet1.getValues().size();
-        ValueRange lastPrice = sheetsService.spreadsheets().values().get(SPREADSHEET_ID, String.format("%s%s%s", RANGE_SUFFIX, column, size)).execute();
+        ValueRange lastPrice = sheetsService.spreadsheets().values().get(spreadsheetId, column + size).execute();
 
         return Double.parseDouble(lastPrice.getValues().get(0).get(0).toString());
     }
 
     public static void writePrices(List<Double> prices) throws IOException
     {
-        ValueRange sheet1 = sheetsService.spreadsheets().values().get(SPREADSHEET_ID, SHEET_NAME).execute();
+        log.info("Writing prices START");
+
+        ValueRange sheet1 = sheetsService.spreadsheets().values().get(spreadsheetId, SHEET_NAME).execute();
         int size = sheet1.getValues().size();
         int nextFreeRow = size + 1;
 
@@ -124,7 +183,9 @@ public class SheetsService
                 .setData(data);
 
         BatchUpdateValuesResponse batchResult = sheetsService.spreadsheets().values()
-                .batchUpdate(SPREADSHEET_ID, batchBody)
+                .batchUpdate(spreadsheetId, batchBody)
                 .execute();
+
+        log.info("Writing prices END");
     }
 }

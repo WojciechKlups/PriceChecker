@@ -5,7 +5,7 @@
  * All rights reserved
  *
  ************************************************************/
-package org.wojciechklups.service;
+package org.wojciechklups.service.ceneoservices;
 
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;

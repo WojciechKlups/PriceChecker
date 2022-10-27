@@ -16,11 +16,12 @@ import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.client.util.store.FileDataStoreFactory;
+import com.google.api.services.drive.DriveScopes;
 import com.google.api.services.sheets.v4.SheetsScopes;
 
 import java.io.*;
 import java.security.GeneralSecurityException;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.wojciechklups.google.SheetsServicePreparer.CREDENTIALS_FILE_PATH;
@@ -36,7 +37,12 @@ public class GoogleAuthorizeUtil
 {
     private static final JsonFactory JSON_FACTORY = GsonFactory.getDefaultInstance();
 
-    private static final List<String> SCOPES = Collections.singletonList(SheetsScopes.SPREADSHEETS);
+    private static final List<String> SCOPES = Arrays.asList(
+            SheetsScopes.SPREADSHEETS,
+            SheetsScopes.DRIVE,
+            SheetsScopes.DRIVE_FILE,
+            DriveScopes.DRIVE_FILE,
+            DriveScopes.DRIVE);
 
     public static Credential authorize() throws IOException, GeneralSecurityException
     {

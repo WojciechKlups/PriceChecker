@@ -4,9 +4,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
-import org.wojciechklups.enums.ProductPageEnum;
-import org.wojciechklups.google.SheetsService;
-import org.wojciechklups.service.ResponsePreparer;
+import org.wojciechklups.service.sheetsservices.SheetsService;
+import org.wojciechklups.service.ceneoservices.ResponsePreparer;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -33,7 +32,7 @@ public class AppMain extends SpringBootServletInitializer
 //                .forEach(System.out::println);
 
         SheetsService.setup();
-        System.out.println(SheetsService.readLastPrice(ProductPageEnum.PSU.getColumn()));
-//        SheetsService.writePrices(preparedResponses);
+//        System.out.println(SheetsService.readLastPrice(ProductPageEnum.PSU.getColumn()));
+        SheetsService.writePrices(preparedResponses);
     }
 }
