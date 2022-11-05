@@ -123,13 +123,13 @@ public class SheetsService
 
     }
 
-    public static Double readLastPrice(String column) throws IOException
+    public static String readLastPrice(String column) throws IOException
     {
         ValueRange sheet1 = sheetsService.spreadsheets().values().get(spreadsheetId, SHEET_NAME).execute();
         int size = sheet1.getValues().size();
-        ValueRange lastPrice = sheetsService.spreadsheets().values().get(spreadsheetId, column + size).execute();
+        ValueRange lastPrice = sheetsService.spreadsheets().values().get(spreadsheetId, RANGE_SUFFIX + column + size).execute();
 
-        return Double.parseDouble(lastPrice.getValues().get(0).get(0).toString());
+        return lastPrice.getValues().get(0).get(0).toString();
     }
 
     public static void writePrices(List<Double> prices) throws IOException
