@@ -4,7 +4,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
-import org.wojciechklups.service.sheetsservices.SheetsService;
+import org.wojciechklups.service.sheetsservices.SheetService;
+import org.wojciechklups.service.sheetsservices.SheetsServiceImpl;
 import org.wojciechklups.service.ceneoservices.ResponsePreparer;
 
 import java.io.IOException;
@@ -31,8 +32,11 @@ public class AppMain extends SpringBootServletInitializer
 //        preparedResponses.stream()
 //                .forEach(System.out::println);
 
-        SheetsService.setup();
+
+        SheetsServiceImpl sheetsService = new SheetsServiceImpl();
+        sheetsService.setup();
+        sheetsService.writePrices(preparedResponses);
 //        System.out.println(SheetsService.readLastPrice(ProductPageEnum.PSU.getColumn()));
-        SheetsService.writePrices(preparedResponses);
+//        SheetsServiceImpl.writePrices(preparedResponses);
     }
 }

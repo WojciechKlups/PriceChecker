@@ -13,19 +13,16 @@ import com.google.api.client.extensions.jetty.auth.oauth2.LocalServerReceiver;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
 import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
-import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.client.util.store.FileDataStoreFactory;
 import com.google.api.services.drive.DriveScopes;
 import com.google.api.services.sheets.v4.SheetsScopes;
+import org.wojciechklups.enums.SheetsEnum;
 
 import java.io.*;
 import java.security.GeneralSecurityException;
 import java.util.Arrays;
 import java.util.List;
-
-import static org.wojciechklups.google.SheetsServicePreparer.CREDENTIALS_FILE_PATH;
-import static org.wojciechklups.google.SheetsServicePreparer.TOKENS_DIRECTORY_PATH;
 
 /**
  * This class handles authorization with google services.
@@ -35,8 +32,6 @@ import static org.wojciechklups.google.SheetsServicePreparer.TOKENS_DIRECTORY_PA
  */
 public class GoogleAuthorizeUtil
 {
-    private static final JsonFactory JSON_FACTORY = GsonFactory.getDefaultInstance();
-
     private static final List<String> SCOPES = Arrays.asList(
             SheetsScopes.SPREADSHEETS,
             SheetsScopes.DRIVE,
@@ -46,18 +41,19 @@ public class GoogleAuthorizeUtil
 
     public static Credential authorize() throws IOException, GeneralSecurityException
     {
-        InputStream in = GoogleAuthorizeUtil.class.getResourceAsStream(CREDENTIALS_FILE_PATH);
+        InputStream in = GoogleAuthorizeUtil.class.getResourceAsStream(SheetsEnum.CREDENTIALS_FILE_PATH.getValue());
 
         if (in == null)
         {
-            throw new FileNotFoundException("Resource not found: " + CREDENTIALS_FILE_PATH);
+            throw new FileNotFoundException("Resource not found: " + SheetsEnum.CREDENTIALS_FILE_PATH.getValue());
         }
 
-        GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(JSON_FACTORY, new InputStreamReader(in));
+        GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(GsonFactory.getDefaultInstance(), new InputStreamReader(in));
 
         GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(
-                GoogleNetHttpTransport.newTrustedTransport(), JSON_FACTORY, clientSecrets, SCOPES)
-                .setDataStoreFactory(new FileDataStoreFactory(new File(TOKENS_DIRECTORY_PATH)))
+                GoogleNetHttpTransport.newTrustedTransport(),
+                GsonFactory.getDefaultInstance(), clientSecrets, SCOPES)
+                .setDataStoreFactory(new FileDataStoreFactory(new File(SheetsEnum.TOKENS_DIRECTORY_PATH.getValue())))
                 .setAccessType("offline")
                 .build();
 

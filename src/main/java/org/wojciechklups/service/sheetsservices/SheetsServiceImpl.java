@@ -36,7 +36,7 @@ import java.util.stream.Collectors;
  */
 @Service
 @Slf4j
-public class SheetsService
+public class SheetsServiceImpl implements SheetService
 {
     @Value("${sheet.name}")
     private String sheetName;
@@ -44,27 +44,38 @@ public class SheetsService
     @Value("${sheet.isFirst}")
     private Boolean isFirstSheetFlag;
 
-    private static String SHEET_NAME;
+    private String currentSheetName;
 
-    private static String RANGE_SUFFIX;
-    public static String spreadsheetId = "";
+    private String rangeSuffix;
+    public String spreadsheetId = "";
 
-    private static Sheets sheetsService;
-    private static Drive driveService;
+    private final Sheets sheetsService;
+    private final Drive driveService;
+
+    public SheetsServiceImpl() throws GeneralSecurityException, IOException
+    {
+        SheetsServicePreparer sheetsServicePreparer = new SheetsServicePreparer();
+        DriveServicePreparer driveServicePreparer = new DriveServicePreparer();
+
+        this.sheetsService = sheetsServicePreparer.getSheetsService();
+        this.driveService = driveServicePreparer.getDriveService();
+    }
 
     @PostConstruct
     public void init()
     {
-        SHEET_NAME = this.sheetName;
-        Boolean IS_FIRST_SHEET_FLAG = this.isFirstSheetFlag;
-        RANGE_SUFFIX = IS_FIRST_SHEET_FLAG ? "" : String.format("%s!", SHEET_NAME);
+        currentSheetName = this.sheetName;
+        Boolean isFirstSheetFlag = this.isFirstSheetFlag;
+        rangeSuffix = isFirstSheetFlag ? "" : String.format("%s!", currentSheetName);
     }
 
-    public static void setup() throws GeneralSecurityException, IOException
+    public void setup() throws IOException
     {
-        driveService = DriveServicePreparer.getDriveService();
-        sheetsService = SheetsServicePreparer.getSheetsService();
+        getSpreadsheetOrCreateNew();
+    }
 
+    private void getSpreadsheetOrCreateNew() throws IOException
+    {
         String userEmail = driveService.about().get().setFields("user").execute().getUser().getEmailAddress();
 
         FileList searchResult = driveService.files().list()
@@ -95,17 +106,17 @@ public class SheetsService
         }
     }
 
-    private static void createHeadersInSpreadsheet() throws IOException
+    private void createHeadersInSpreadsheet() throws IOException
     {
-        ValueRange sheet1 = sheetsService.spreadsheets().values().get(spreadsheetId, SHEET_NAME).execute();
+        ValueRange sheet1 = sheetsService.spreadsheets().values().get(spreadsheetId, currentSheetName).execute();
         List<ValueRange> data = new ArrayList<>();
 
         data.add(new ValueRange() // To fix
-                .setRange(String.format("%s%s1:%s%s", RANGE_SUFFIX,
+                .setRange(String.format("%s%s1:%s%s", rangeSuffix,
                         ProductPageEnum.DATE.getColumn(),
                         ProductPageEnum.TOTAL_2.getColumn(),
                         ProductPageEnum.values().length))
-                .setValues(Arrays.asList(Arrays.stream(ProductPageEnum.values()).map(v -> v.toString()).collect(Collectors.toList()
+                .setValues(Arrays.asList(Arrays.stream(ProductPageEnum.values()).map(Enum::toString).collect(Collectors.toList()
                 )))
         );
 
@@ -123,28 +134,24 @@ public class SheetsService
 
     }
 
-    public static String readLastPrice(String column) throws IOException
+    public String readLastPrice(String column) throws IOException
     {
-        ValueRange sheet1 = sheetsService.spreadsheets().values().get(spreadsheetId, SHEET_NAME).execute();
+        ValueRange sheet1 = sheetsService.spreadsheets().values().get(spreadsheetId, currentSheetName).execute();
         int size = sheet1.getValues().size();
-        ValueRange lastPrice = sheetsService.spreadsheets().values().get(spreadsheetId, RANGE_SUFFIX + column + size).execute();
+        ValueRange lastPrice = sheetsService.spreadsheets().values().get(spreadsheetId, rangeSuffix + column + size).execute();
 
         return lastPrice.getValues().get(0).get(0).toString();
     }
 
-    public static void writePrices(List<Double> prices) throws IOException
+    public void writePrices(List<Double> prices) throws IOException
     {
         log.info("Writing prices START");
-
-        ValueRange sheet1 = sheetsService.spreadsheets().values().get(spreadsheetId, SHEET_NAME).execute();
-        int size = sheet1.getValues().size();
-        int nextFreeRow = size + 1;
 
         List<ValueRange> data = new ArrayList<>();
 
         //Add date
         data.add(new ValueRange()
-                .setRange(String.format("%sA%s", RANGE_SUFFIX, nextFreeRow))
+                .setRange(String.format("%sA%s", rangeSuffix, getNextFreeRow()))
                 .setValues(Arrays.asList(
                         Arrays.asList(LocalDate.now()
                                 .format(DateTimeFormatter.ofPattern("dd-MM-yyyy")))
@@ -153,29 +160,29 @@ public class SheetsService
 
         //Add prices
         data.add(new ValueRange()
-                .setRange(String.format("%sB%s", RANGE_SUFFIX, nextFreeRow))
+                .setRange(String.format("%sB%s", rangeSuffix, getNextFreeRow()))
                 .setValues(Arrays.asList(
                         Arrays.asList(prices.toArray())))
                 );
 
         //Sum prices with GPU
         data.add(new ValueRange()
-                .setRange(String.format("%sP%s", RANGE_SUFFIX, nextFreeRow))
+                .setRange(String.format("%sP%s", rangeSuffix, getNextFreeRow()))
                 .setValues(Arrays.asList(
-                        Arrays.asList(String.format("=SUMA(%sB%s:%sM%s)", RANGE_SUFFIX, nextFreeRow, RANGE_SUFFIX, nextFreeRow)))));
+                        Arrays.asList(String.format("=SUMA(%sB%s:%sM%s)", rangeSuffix, getNextFreeRow(), rangeSuffix, getNextFreeRow())))));
 
         //Sum prices with GPU_1
         data.add(new ValueRange()
-                .setRange(String.format("%sQ%s", RANGE_SUFFIX, nextFreeRow))
+                .setRange(String.format("%sQ%s", rangeSuffix, getNextFreeRow()))
                 .setValues(Arrays.asList(
-                        Arrays.asList(String.format("=SUMA(%sB%s:%SL%s; %sN%s)", RANGE_SUFFIX, nextFreeRow, RANGE_SUFFIX, nextFreeRow, RANGE_SUFFIX, nextFreeRow))))
+                        Arrays.asList(String.format("=SUMA(%sB%s:%SL%s; %sN%s)", rangeSuffix, getNextFreeRow(), rangeSuffix, getNextFreeRow(), rangeSuffix, getNextFreeRow()))))
         );
 
         //Sum prices with GPU_2
         data.add(new ValueRange()
-                .setRange(String.format("%sR%s", RANGE_SUFFIX, nextFreeRow))
+                .setRange(String.format("%sR%s", rangeSuffix, getNextFreeRow()))
                 .setValues(Arrays.asList(
-                        Arrays.asList(String.format("=SUMA(%sB%s:%sL%s; %sO%s)", RANGE_SUFFIX, nextFreeRow, RANGE_SUFFIX, nextFreeRow, RANGE_SUFFIX, nextFreeRow))))
+                        Arrays.asList(String.format("=SUMA(%sB%s:%sL%s; %sO%s)", rangeSuffix, getNextFreeRow(), rangeSuffix, getNextFreeRow(), rangeSuffix, getNextFreeRow()))))
         );
 
         BatchUpdateValuesRequest batchBody = new BatchUpdateValuesRequest()
@@ -187,5 +194,23 @@ public class SheetsService
                 .execute();
 
         log.info("Writing prices END");
+    }
+
+    private int getNextFreeRow() throws IOException
+    {
+        ValueRange sheet1 = sheetsService.spreadsheets().values().get(spreadsheetId, currentSheetName).execute();
+        int size = sheet1.getValues().size();
+        return size + 1;
+    }
+
+    private void addDate(List<ValueRange> data) throws IOException
+    {
+        data.add(new ValueRange()
+                .setRange(String.format("%sA%s", rangeSuffix, getNextFreeRow()))
+                .setValues(Arrays.asList(
+                        Arrays.asList(LocalDate.now()
+                                .format(DateTimeFormatter.ofPattern("dd-MM-yyyy")))
+                ))
+        );
     }
 }
