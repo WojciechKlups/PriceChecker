@@ -18,7 +18,6 @@ import org.wojciechklups.enums.ProductPageEnum;
 import org.wojciechklups.google.DriveServicePreparer;
 import org.wojciechklups.google.SheetsServicePreparer;
 
-import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.time.LocalDate;
@@ -39,14 +38,14 @@ import java.util.stream.Collectors;
 public class SheetsServiceImpl implements SheetService
 {
     @Value("${sheet.name}")
-    private String sheetName;
+    private final String sheetName = "";
 
     @Value("${sheet.isFirst}")
     private Boolean isFirstSheetFlag;
 
     private String currentSheetName;
 
-    private String rangeSuffix;
+    private final String rangeSuffix;
     public String spreadsheetId = "";
 
     private final Sheets sheetsService;
@@ -59,14 +58,8 @@ public class SheetsServiceImpl implements SheetService
 
         this.sheetsService = sheetsServicePreparer.getSheetsService();
         this.driveService = driveServicePreparer.getDriveService();
-    }
-
-    @PostConstruct
-    public void init()
-    {
         currentSheetName = this.sheetName;
-        Boolean isFirstSheetFlag = this.isFirstSheetFlag;
-        rangeSuffix = isFirstSheetFlag ? "" : String.format("%s!", currentSheetName);
+        this.rangeSuffix = this.isFirstSheetFlag ? "" : String.format("%s!", currentSheetName);
     }
 
     public void setup() throws IOException
@@ -149,41 +142,11 @@ public class SheetsServiceImpl implements SheetService
 
         List<ValueRange> data = new ArrayList<>();
 
-        //Add date
-        data.add(new ValueRange()
-                .setRange(String.format("%sA%s", rangeSuffix, getNextFreeRow()))
-                .setValues(Arrays.asList(
-                        Arrays.asList(LocalDate.now()
-                                .format(DateTimeFormatter.ofPattern("dd-MM-yyyy")))
-                ))
-        );
+        addDate(data);
 
-        //Add prices
-        data.add(new ValueRange()
-                .setRange(String.format("%sB%s", rangeSuffix, getNextFreeRow()))
-                .setValues(Arrays.asList(
-                        Arrays.asList(prices.toArray())))
-                );
+        addPrices(data, prices);
 
-        //Sum prices with GPU
-        data.add(new ValueRange()
-                .setRange(String.format("%sP%s", rangeSuffix, getNextFreeRow()))
-                .setValues(Arrays.asList(
-                        Arrays.asList(String.format("=SUMA(%sB%s:%sM%s)", rangeSuffix, getNextFreeRow(), rangeSuffix, getNextFreeRow())))));
-
-        //Sum prices with GPU_1
-        data.add(new ValueRange()
-                .setRange(String.format("%sQ%s", rangeSuffix, getNextFreeRow()))
-                .setValues(Arrays.asList(
-                        Arrays.asList(String.format("=SUMA(%sB%s:%SL%s; %sN%s)", rangeSuffix, getNextFreeRow(), rangeSuffix, getNextFreeRow(), rangeSuffix, getNextFreeRow()))))
-        );
-
-        //Sum prices with GPU_2
-        data.add(new ValueRange()
-                .setRange(String.format("%sR%s", rangeSuffix, getNextFreeRow()))
-                .setValues(Arrays.asList(
-                        Arrays.asList(String.format("=SUMA(%sB%s:%sL%s; %sO%s)", rangeSuffix, getNextFreeRow(), rangeSuffix, getNextFreeRow(), rangeSuffix, getNextFreeRow()))))
-        );
+        sumPrices(data);
 
         BatchUpdateValuesRequest batchBody = new BatchUpdateValuesRequest()
                 .setValueInputOption("USER_ENTERED")
@@ -211,6 +174,41 @@ public class SheetsServiceImpl implements SheetService
                         Arrays.asList(LocalDate.now()
                                 .format(DateTimeFormatter.ofPattern("dd-MM-yyyy")))
                 ))
+        );
+    }
+
+    private void addPrices(List<ValueRange> data, List<Double> prices) throws IOException
+    {
+        data.add(new ValueRange()
+                .setRange(String.format("%sB%s", rangeSuffix, getNextFreeRow()))
+                .setValues(Arrays.asList(
+                        Arrays.asList(prices.toArray())))
+        );
+    }
+
+    private void sumPrices(List<ValueRange> data) throws IOException
+    {
+        //Sum prices with GPU
+        data.add(new ValueRange()
+                .setRange(String.format("%sP%s", rangeSuffix, getNextFreeRow()))
+                .setValues(Arrays.asList(
+                        Arrays.asList(String.format("=SUMA(%sB%s:%sM%s)", rangeSuffix, getNextFreeRow(),
+                                rangeSuffix, getNextFreeRow())))));
+
+        //Sum prices with GPU_1
+        data.add(new ValueRange()
+                .setRange(String.format("%sQ%s", rangeSuffix, getNextFreeRow()))
+                .setValues(Arrays.asList(
+                        Arrays.asList(String.format("=SUMA(%sB%s:%SL%s; %sN%s)", rangeSuffix, getNextFreeRow(),
+                                rangeSuffix, getNextFreeRow(), rangeSuffix, getNextFreeRow()))))
+        );
+
+        //Sum prices with GPU_2
+        data.add(new ValueRange()
+                .setRange(String.format("%sR%s", rangeSuffix, getNextFreeRow()))
+                .setValues(Arrays.asList(
+                        Arrays.asList(String.format("=SUMA(%sB%s:%sL%s; %sO%s)", rangeSuffix, getNextFreeRow(),
+                                rangeSuffix, getNextFreeRow(), rangeSuffix, getNextFreeRow()))))
         );
     }
 }
