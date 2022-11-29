@@ -29,14 +29,10 @@ public class AppMain extends SpringBootServletInitializer
         ResponsePreparer responsePreparer = new ResponsePreparer();
         List<Double> preparedResponses = responsePreparer.getPreparedResponses();
 
-//        preparedResponses.stream()
-//                .forEach(System.out::println);
-
 
         SheetsServiceImpl sheetsService = new SheetsServiceImpl();
         sheetsService.setup();
         sheetsService.writePrices(preparedResponses);
 //        System.out.println(SheetsService.readLastPrice(ProductPageEnum.PSU.getColumn()));
-//        SheetsServiceImpl.writePrices(preparedResponses);
     }
 }

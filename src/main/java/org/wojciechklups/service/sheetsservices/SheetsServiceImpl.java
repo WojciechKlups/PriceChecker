@@ -12,12 +12,15 @@ import com.google.api.services.drive.model.FileList;
 import com.google.api.services.sheets.v4.Sheets;
 import com.google.api.services.sheets.v4.model.*;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.wojciechklups.enums.ProductPageEnum;
 import org.wojciechklups.google.DriveServicePreparer;
 import org.wojciechklups.google.SheetsServicePreparer;
 
+import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.time.LocalDate;
@@ -37,19 +40,20 @@ import java.util.stream.Collectors;
 @Slf4j
 public class SheetsServiceImpl implements SheetService
 {
-    @Value("${sheet.name}")
-    private final String sheetName = "";
+    private String sheetName = "";
 
-    @Value("${sheet.isFirst}")
-    private Boolean isFirstSheetFlag;
+    private final Boolean isFirstSheetFlag;
 
     private String currentSheetName;
 
-    private final String rangeSuffix;
+    private String rangeSuffix;
     public String spreadsheetId = "";
 
     private final Sheets sheetsService;
     private final Drive driveService;
+
+    @Autowired
+    private Environment environment;
 
     public SheetsServiceImpl() throws GeneralSecurityException, IOException
     {
@@ -58,9 +62,18 @@ public class SheetsServiceImpl implements SheetService
 
         this.sheetsService = sheetsServicePreparer.getSheetsService();
         this.driveService = driveServicePreparer.getDriveService();
-        currentSheetName = this.sheetName;
-        this.rangeSuffix = this.isFirstSheetFlag ? "" : String.format("%s!", currentSheetName);
+
+        this.sheetName = environment.getProperty("sheet.name");
+        this.isFirstSheetFlag = Boolean.parseBoolean(environment.getProperty("sheet.isFirst"));
     }
+
+//    @PostConstruct
+//    public void init()
+//    {
+//        currentSheetName = this.sheetName;
+//        Boolean isFirstSheetFlag = this.isFirstSheetFlag;
+//        this.rangeSuffix = isFirstSheetFlag ? "" : String.format("%s!", currentSheetName);
+//    }
 
     public void setup() throws IOException
     {
