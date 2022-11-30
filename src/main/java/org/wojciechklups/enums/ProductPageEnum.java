@@ -34,7 +34,7 @@ public enum ProductPageEnum
     CPU_COOLER("https://www.ceneo.pl/120786545", "L"),
     GPU("https://www.ceneo.pl/114861667", "M"),
     GPU_1("https://www.ceneo.pl/112032819", "N"), //5-8%
-    GPU_2("https://www.ceneo.pl/96957937", "O"), //25-30%
+    GPU_2("https://www.ceneo.pl/96958328", "O"), //25-30%
     TOTAL("", "P"),
     TOTAL_1("", "Q"),
     TOTAL_2("", "R");
