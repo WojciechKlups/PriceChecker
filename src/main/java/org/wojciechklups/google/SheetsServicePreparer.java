@@ -27,7 +27,7 @@ import java.security.GeneralSecurityException;
 public class SheetsServicePreparer
 {
     public static final String CREDENTIALS_FILE_PATH = "/google-sheets-client-secret.json";
-    public static final String TOKENS_DIRECTORY_PATH = "tokens";
+    public static final String TOKENS_DIRECTORY_PATH = "/tokens";
     private static final String APPLICATION_NAME = "Price Checker";
     public static final JsonFactory JSON_FACTORY = GsonFactory.getDefaultInstance();
 
