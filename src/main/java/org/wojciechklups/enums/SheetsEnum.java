@@ -19,7 +19,7 @@ import lombok.Getter;
 public enum SheetsEnum
 {
     CREDENTIALS_FILE_PATH ("/google-sheets-client-secret.json"),
-    TOKENS_DIRECTORY_PATH ("tokens"),
+    TOKENS_DIRECTORY_PATH ("/tokens"),
     APPLICATION_NAME ("Price Checker");
 
     private final String value;
