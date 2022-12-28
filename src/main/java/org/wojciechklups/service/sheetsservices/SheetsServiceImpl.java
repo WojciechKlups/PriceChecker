@@ -13,6 +13,7 @@ import com.google.api.services.sheets.v4.Sheets;
 import com.google.api.services.sheets.v4.model.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
@@ -37,12 +38,15 @@ import java.util.stream.Collectors;
  * @timestamp Date: 2022-08-29 15:14:21 +0200 (29 sie 2022)
  */
 @Service
+@Configurable
 @Slf4j
 public class SheetsServiceImpl implements SheetService
 {
-    private String sheetName = "";
+    @Value("sheet.name")
+    private final String sheetName = "";
 
-    private final Boolean isFirstSheetFlag;
+    @Value("sheet.isFirst")
+    private Boolean isFirstSheetFlag;
 
     private String currentSheetName;
 
@@ -51,7 +55,6 @@ public class SheetsServiceImpl implements SheetService
 
     private final Sheets sheetsService;
     private final Drive driveService;
-
     @Autowired
     private Environment environment;
 
@@ -63,8 +66,15 @@ public class SheetsServiceImpl implements SheetService
         this.sheetsService = sheetsServicePreparer.getSheetsService();
         this.driveService = driveServicePreparer.getDriveService();
 
-        this.sheetName = environment.getProperty("sheet.name");
-        this.isFirstSheetFlag = Boolean.parseBoolean(environment.getProperty("sheet.isFirst"));
+        String sheetNameFromEnv = environment.getProperty("sheet.name");
+        String isFirstFromEnv = environment.getProperty("sheet.isFirst");
+
+        currentSheetName = this.sheetName;
+        Boolean isFirstSheetFlag = this.isFirstSheetFlag;
+        this.rangeSuffix = isFirstSheetFlag ? "" : String.format("%s!", currentSheetName);
+
+//        this.sheetName = environment.getProperty("sheet.name");
+//        this.isFirstSheetFlag = Boolean.parseBoolean(environment.getProperty("sheet.isFirst"));
     }
 
 //    @PostConstruct

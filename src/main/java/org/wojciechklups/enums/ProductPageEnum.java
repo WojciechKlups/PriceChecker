@@ -25,16 +25,16 @@ public enum ProductPageEnum
     CHASSIS_FAN("https://www.ceneo.pl/42364006", "C"),
     THERMAL_PASTE("https://www.ceneo.pl/39314848", "D"),
     HDD("https://www.ceneo.pl/66746140", "E"),
-    RAM("https://www.ceneo.pl/123491287", "F"), //3600
+    RAM("https://www.ceneo.pl/111801433", "F"),
     CHASSIS("https://www.ceneo.pl/93925243", "G"),
-    CPU("https://www.ceneo.pl/119352415", "H"),
-    MOBO("https://www.ceneo.pl/125162860", "I"),
+    CPU("https://www.ceneo.pl/140261842", "H"),
+    MOBO("https://www.ceneo.pl/117461531", "I"),
     SYSTEM_SSD("https://www.ceneo.pl/119770352", "J"),
     DATA_SSD("https://www.ceneo.pl/120380043", "K"),
     CPU_COOLER("https://www.ceneo.pl/120786545", "L"),
-    GPU("https://www.ceneo.pl/114861667", "M"),
+    GPU("https://www.ceneo.pl/98578185", "M"), //zostajemy tutaj bo celujemy w 1440p, monitor 27 cali
     GPU_1("https://www.ceneo.pl/112032819", "N"), //5-8%
-    GPU_2("https://www.ceneo.pl/96958328", "O"), //25-30%
+    GPU_2("https://www.ceneo.pl/113390266", "O"), //25-30%
     TOTAL("", "P"),
     TOTAL_1("", "Q"),
     TOTAL_2("", "R");

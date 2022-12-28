@@ -1,12 +1,11 @@
 package org.wojciechklups;
 
-import lombok.AllArgsConstructor;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.web.servlet.ServletComponentScan;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
-import org.wojciechklups.service.sheetsservices.SheetService;
-import org.wojciechklups.service.sheetsservices.SheetsServiceImpl;
 import org.wojciechklups.service.ceneoservices.ResponsePreparer;
+import org.wojciechklups.service.sheetsservices.SheetsServiceImpl;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -20,12 +19,12 @@ import java.util.List;
  * @timestamp Date: 2022-09-01 23:41:15 +0200 (01 wrz 2022)
  */
 @SpringBootApplication
-@AllArgsConstructor
+@ServletComponentScan
 public class AppMain extends SpringBootServletInitializer
 {
     public static void main(String[] args) throws GeneralSecurityException, IOException
     {
-        SpringApplication.run(AppMain.class, args);
+        new SpringApplication(AppMain.class).run(args);
         ResponsePreparer responsePreparer = new ResponsePreparer();
         List<Double> preparedResponses = responsePreparer.getPreparedResponses();
 
